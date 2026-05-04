@@ -37,6 +37,12 @@ export interface Application {
   }
 }
 
+export type SelectedApp = {
+  label: string
+  description: string
+  app: Application
+}
+
 export interface DiskSpace<T> {
   capacity: T
   folders: {
@@ -87,4 +93,16 @@ export interface Scenario {
 export interface Settings {
   misMatchThreshold: number
   repoUrl: string
+}
+
+export interface JobStatus {
+  id: string
+  name: 'reference' | 'test'
+  state: 'completed' | 'failed' | 'active' | 'delayed' | 'prioritized' | 'waiting' | 'waiting-children'
+  progress: string | boolean | number | object
+  attemptsMade?: number
+  failedReason?: string
+  timestamp: number
+  processedOn?: number
+  finishedOn?: number
 }

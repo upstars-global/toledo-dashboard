@@ -21,6 +21,8 @@ const { refreshReports } = useReportsStore()
 const { refreshApps } = useApplicationsStore()
 const { showErrorMessage, showSuccessMessage } = useNotifications()
 const { user } = useCurrentUser()
+const { isReferenceJobRunning } = storeToRefs(useJobsStore())
+const { refreshJobsStatus } = useJobsStore()
 
 const modal = reactive({
   startTest: false
@@ -44,9 +46,11 @@ async function handleStartTest() {
     showSuccessMessage(t('notifications.tests.start'), selectedApp.value?.name)
     toggleStartTestModal()
     await refreshReports()
+    await refreshJobsStatus()
   } catch (error) {
     showErrorMessage(error)
     await refreshReports()
+    await refreshJobsStatus()
   }
 }
 
@@ -110,6 +114,7 @@ const columns: TableColumn<Application>[] = [
           : undefined,
         h(UButton, {
           label: t('actions.startTest'),
+          disabled: isReferenceJobRunning.value,
           onClick: () => toggleStartTestModal(row.original)
         })
       ])
