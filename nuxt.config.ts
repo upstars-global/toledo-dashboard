@@ -26,13 +26,19 @@ export default defineNuxtConfig({
       password: process.env.NUXT_SESSION_PASSWORD || ''
     },
     public: {
-      isDev: process.env.NODE_ENV === 'development'
+      isDev: process.env.NODE_ENV === 'development',
+      socketHost: process.env.SOCKET_HOST
     }
   },
   compatibilityDate: '2025-07-15',
   nitro: {
     serveStatic: true,
     routeRules: getNitroRouteRules()
+  },
+  vite: {
+    optimizeDeps: {
+      include: ['mitt']
+    }
   },
   eslint: {
     config: {

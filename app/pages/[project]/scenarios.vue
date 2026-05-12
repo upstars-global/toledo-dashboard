@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { h, resolveComponent } from 'vue'
-import type { ReferenceRequestBody, Scenario, SelectedApp } from '~~/shared/types'
+import type { Scenario, SelectedApp } from '~~/shared/types'
 import type { TableColumn, CommandPaletteGroup } from '@nuxt/ui'
 
 type SelectedRows = Record<string, boolean | undefined>
@@ -17,15 +17,14 @@ const UCheckbox = resolveComponent('UCheckbox')
 const { t } = useI18n()
 const { ui } = useAppConfig()
 const route = useRoute()
-const { showErrorMessage, showSuccessMessage } = useNotifications()
-const { refreshReports } = useReportsStore()
+const { createReferences, startTest } = useActions()
+const { showErrorMessage } = useNotifications()
 const { dynamicAppsList, persistentAppsList } = storeToRefs(useApplicationsStore())
 const { refreshApps } = useApplicationsStore()
 const { mockUrl } = storeToRefs(useConfigStore())
 const { globalMismatchThreshold } = storeToRefs(useSettingsStore())
-const { user } = useCurrentUser()
+const { userId, userName } = useCurrentUser()
 const { isReferenceJobRunning } = storeToRefs(useJobsStore())
-const { refreshJobsStatus } = useJobsStore()
 
 const { data: scenariosData, error: scenariosError } = await useFetch<Scenario[]>(
   `/api/${route.params.project}/scenarios`,
@@ -35,6 +34,7 @@ const { data: scenariosData, error: scenariosError } = await useFetch<Scenario[]
 if (scenariosError.value) {
   showErrorMessage(scenariosError.value)
 }
+
 const modal = reactive({
   startTest: false,
   createReference: false
@@ -102,48 +102,28 @@ function getApplicationsInfo(): CommandPaletteGroup[] {
   ]
 }
 
-async function handleStartTest() {
-  try {
-    await $fetch(`/api/${route.params.project}/action/start`, {
-      method: 'post',
-      body: {
-        application: selectedApp.value?.app,
-        misMatchThreshold: misMatchThreshold.value,
-        scenarios: Object.entries(selectedRows.value)
-          .filter(([_, value]) => value)
-          .map(([key]) => key),
-        userName: user.value?.name
-      }
-    })
-    showSuccessMessage(t('notifications.tests.start'))
-    toggleStartTestModal(true)
-    await refreshReports()
-    await refreshJobsStatus()
-  } catch (error) {
-    showErrorMessage(error)
-    await refreshReports()
-    await refreshJobsStatus()
-  }
+async function handleCreateReferences() {
+  await createReferences({
+    scenarios: Object.entries(selectedRows.value)
+      .filter(([_, value]) => value)
+      .map(([key]) => key),
+    userName: userName.value,
+    userId: userId.value
+  })
+  toggleCreateReferenceModal(true)
 }
 
-async function handleCreateReferences() {
-  try {
-    const body: ReferenceRequestBody = {
-      scenarios: Object.entries(selectedRows.value)
-        .filter(([_, value]) => value)
-        .map(([key]) => key),
-      userName: user.value?.name
-    }
-
-    await $fetch(`/api/${route.params.project}/action/reference`, { method: 'post', body })
-
-    showSuccessMessage(t('notifications.references.start'))
-    toggleCreateReferenceModal(true)
-    await refreshJobsStatus()
-  } catch (error) {
-    showErrorMessage(error)
-    await refreshJobsStatus()
-  }
+async function handleStartTest() {
+  await startTest({
+    application: selectedApp.value?.app,
+    misMatchThreshold: misMatchThreshold.value,
+    scenarios: Object.entries(selectedRows.value)
+      .filter(([_, value]) => value)
+      .map(([key]) => key),
+    userName: userName.value,
+    userId: userId.value
+  })
+  toggleStartTestModal(true)
 }
 
 function handleFilterChange(query: string) {

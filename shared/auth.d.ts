@@ -5,6 +5,7 @@ declare module '#auth-utils' {
     avatar?: string
     email: string
     name: string
+    id: string
   }
 }
 

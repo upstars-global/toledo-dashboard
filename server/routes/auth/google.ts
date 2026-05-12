@@ -12,7 +12,8 @@ export default defineOAuthGoogleEventHandler({
         const userData = {
           avatar: user.picture,
           email: user.email,
-          name: user.name
+          name: user.name,
+          id: `google-${user.sub}`
         }
         await setUserSession(event, { user: userData })
         return sendRedirect(event, '/')

@@ -5,7 +5,8 @@ export default defineEventHandler(async (event) => {
     const userData = {
       avatar: '',
       email: 'developer@local.host',
-      name: 'Local Developer'
+      name: 'Local Developer',
+      id: 'dev-local-user'
     }
     await setUserSession(event, { user: userData })
     return sendRedirect(event, '/')

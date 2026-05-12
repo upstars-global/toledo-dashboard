@@ -13,14 +13,14 @@ const ULink = resolveComponent('ULink')
 const { t } = useI18n()
 const { ui } = useAppConfig()
 const route = useRoute()
-const { showErrorMessage, showSuccessMessage } = useNotifications()
+const { createReferences, startTest } = useActions()
+const { showErrorMessage } = useNotifications()
 const { isReferenceJobRunning, jobsStatus } = storeToRefs(useJobsStore())
 const { refreshJobsStatus } = useJobsStore()
 const { dynamicAppsList, persistentAppsList } = storeToRefs(useApplicationsStore())
 const { globalMismatchThreshold } = storeToRefs(useSettingsStore())
 const { refreshApps } = useApplicationsStore()
-const { refreshReports } = useReportsStore()
-const { user } = useCurrentUser()
+const { userId, userName } = useCurrentUser()
 
 const { data: diskSpaceData, error: diskSpaceError } = await useFetch<DiskSpace<FormatedBytes> | null>(
   `/api/${route.params.project}/disk-space`
@@ -86,6 +86,7 @@ function toggleStartTestModal() {
 function toggleCreateReferenceModal() {
   modal.createReference = !modal.createReference
 }
+
 function getApplicationsInfo(): CommandPaletteGroup[] {
   return [
     {
@@ -109,41 +110,19 @@ function getApplicationsInfo(): CommandPaletteGroup[] {
   ]
 }
 
-async function handleStartTest() {
-  try {
-    await $fetch(`/api/${route.params.project}/action/start`, {
-      method: 'post',
-      body: {
-        application: selectedApp.value?.app,
-        misMatchThreshold: misMatchThreshold.value,
-        userName: user.value?.name
-      }
-    })
-    showSuccessMessage(t('notifications.tests.start'))
-    toggleStartTestModal()
-    await refreshJobsStatus()
-    await refreshReports()
-  } catch (error) {
-    showErrorMessage(error)
-    await refreshJobsStatus()
-    await refreshReports()
-  }
-}
 async function handleCreateReferences() {
-  try {
-    await $fetch(`/api/${route.params.project}/action/reference`, {
-      method: 'post',
-      body: {
-        userName: user.value?.name
-      }
-    })
-    showSuccessMessage(t('notifications.references.start'))
-    toggleCreateReferenceModal()
-    await refreshJobsStatus()
-  } catch (error) {
-    showErrorMessage(error)
-    await refreshJobsStatus()
-  }
+  await createReferences({ userName: userName.value, userId: userId.value })
+  toggleCreateReferenceModal()
+}
+
+async function handleStartTest() {
+  await startTest({
+    application: selectedApp.value?.app,
+    misMatchThreshold: misMatchThreshold.value,
+    userName: userName.value,
+    userId: userId.value
+  })
+  toggleStartTestModal()
 }
 
 function getStatusBadge(status: JobStatus['state']) {
@@ -275,7 +254,7 @@ const columns: TableColumn<JobStatus>[] = [
         </template>
       </UPageCard>
     </UPageGrid>
-    <UPageGrid id="control-panel-jobs" class="h-full">
+    <UPageGrid id="control-panel-jobs" class="gap-2 lg:gap-4 h-full">
       <UPageCard
         :title="t('controlPanel.jobs.title')"
         class="col-span-3 h-full overflow-auto"

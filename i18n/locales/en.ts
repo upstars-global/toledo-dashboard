@@ -133,6 +133,9 @@ export default {
   },
   notifications: {
     references: {
+      added: 'Creation of references has been added to queue',
+      failed: 'Reference creation failed',
+      finish: 'Creation of references has finished',
       start: 'Creation of references has started'
     },
     report: {
@@ -140,8 +143,10 @@ export default {
       delete: 'Report has been deleted | Reports have been deleted'
     },
     tests: {
-      start: 'Testing started',
-      startSelected: 'Testing of selected tests has started'
+      added: 'Test has been added to queue',
+      failed: 'Test failed',
+      finish: 'Testing has finished',
+      start: 'Testing started'
     }
   },
   reports: {

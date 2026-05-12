@@ -16,7 +16,8 @@ export default defineOAuthGitHubEventHandler({
         const userData = {
           avatar: user.avatar_url,
           email: user.email ?? '',
-          name: user.name
+          name: user.name,
+          id: `github-${user.id}`
         }
         await setUserSession(event, { user: userData })
         return sendRedirect(event, '/')

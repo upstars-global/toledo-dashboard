@@ -247,6 +247,7 @@ const columns: TableColumn<Report>[] = [
     id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
+        'id': 'toggle-all-rows',
         'modelValue': table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected(),
         'onUpdate:modelValue': (value: boolean | 'indeterminate') => {
           table.toggleAllPageRowsSelected(!!value)
@@ -266,6 +267,7 @@ const columns: TableColumn<Report>[] = [
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
+        'id': row.original.id,
         'modelValue': row.getIsSelected(),
         'onUpdate:modelValue': (value: boolean | 'indeterminate') => {
           row.toggleSelected(!!value)
