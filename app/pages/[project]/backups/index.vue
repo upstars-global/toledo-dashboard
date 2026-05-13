@@ -2,7 +2,6 @@
 import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import type { FormatedBytes, Report } from '~~/shared/types'
-import { DEFAULT_DELETE_TIMEOUT } from '~~/shared/constants'
 
 definePageMeta({
   middleware: 'auth',
@@ -16,7 +15,8 @@ const UCheckbox = resolveComponent('UCheckbox')
 const { t } = useI18n()
 const { ui } = useAppConfig()
 const route = useRoute()
-const { showErrorMessage, showSuccessMessage } = useNotifications()
+const { showErrorMessage } = useNotifications()
+const { deleteReports } = useActions()
 
 const {
   data: backups,
@@ -65,57 +65,34 @@ function toggleDeleteSelected(clearSelection = false) {
 }
 
 async function deleteBackupReport() {
-  try {
-    loading.value = true
-
-    await $fetch(`/api/${route.params.project}/action/delete`, {
-      method: 'post',
-      body: {
-        folders: [deleteModel.value?.id],
-        type: 'backups'
-      }
-    })
-
-    setTimeout(async () => {
-      await refreshBackups()
-      loading.value = false
-      showSuccessMessage(t('notifications.report.delete', 1), deleteModel.value?.id)
-      toggleDeleteModal()
-    }, DEFAULT_DELETE_TIMEOUT)
-  } catch (error) {
-    await refreshBackups()
-    loading.value = false
-    toggleDeleteModal()
-    showErrorMessage(error)
+  if (!deleteModel.value) {
+    showErrorMessage(t('notifications.report.error.delete', 1))
+    return
   }
+
+  loading.value = true
+  await deleteReports({ folders: [deleteModel.value.id], type: 'backups' })
+  await refreshBackups()
+  loading.value = false
+  toggleDeleteModal()
 }
 
 async function deleteBackupReports() {
-  try {
-    loading.value = true
-
-    await $fetch(`/api/${route.params.project}/action/delete`, {
-      method: 'post',
-      body: {
-        folders: Object.entries(selectedRows.value)
-          .filter(([_, value]) => value)
-          .map(([key]) => key),
-        type: 'backups'
-      }
-    })
-
-    setTimeout(async () => {
-      await refreshBackups()
-      loading.value = false
-      showSuccessMessage(t('notifications.report.delete', 2))
-      toggleDeleteSelected(true)
-    }, DEFAULT_DELETE_TIMEOUT)
-  } catch (error) {
-    await refreshBackups()
-    loading.value = false
-    toggleDeleteSelected(true)
-    showErrorMessage(error)
+  if (!Object.keys(selectedRows.value).length) {
+    showErrorMessage(t('notifications.report.error.delete', 2))
+    return
   }
+
+  loading.value = true
+  await deleteReports({
+    folders: Object.entries(selectedRows.value)
+      .filter(([_, value]) => value)
+      .map(([key]) => key),
+    type: 'backups'
+  })
+  await refreshBackups()
+  loading.value = false
+  toggleDeleteSelected(true)
 }
 
 function getReportDate(createDate: string) {

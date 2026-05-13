@@ -1,3 +1,4 @@
+import type { StartTestRequestBody } from '~~/shared/types'
 import { throwError } from '~~/server/helpers/throwError'
 
 export default defineEventHandler(async (event): Promise<void> => {
@@ -9,7 +10,7 @@ export default defineEventHandler(async (event): Promise<void> => {
       return
     }
 
-    const body = await readBody(event)
+    const body = await readBody<StartTestRequestBody>(event)
 
     return await $fetch(`/_${projectId}/api/action/start`, {
       method: 'post',

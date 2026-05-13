@@ -2,7 +2,6 @@
 import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import type { FormatedBytes, Report } from '~~/shared/types'
-import { DEFAULT_DELETE_TIMEOUT } from '~~/shared/constants'
 
 definePageMeta({
   middleware: 'auth',
@@ -18,7 +17,8 @@ const { ui } = useAppConfig()
 const route = useRoute()
 const { reports } = storeToRefs(useReportsStore())
 const { refreshReports } = useReportsStore()
-const { showErrorMessage, showSuccessMessage } = useNotifications()
+const { showErrorMessage } = useNotifications()
+const { backupReports, deleteReports } = useActions()
 
 const loading = ref(false)
 const backupModel = ref<Report>()
@@ -73,106 +73,63 @@ function toggleDeleteSelected(clearSelection = false) {
   }
 }
 
-async function deleteReport() {
-  try {
-    loading.value = true
-
-    await $fetch(`/api/${route.params.project}/action/delete`, {
-      method: 'post',
-      body: {
-        folders: [deleteModel.value?.id],
-        type: 'reports'
-      }
-    })
-
-    setTimeout(async () => {
-      await refreshReports()
-      loading.value = false
-      showSuccessMessage(t('notifications.report.delete', 1), deleteModel.value?.id)
-      toggleDeleteModal()
-    }, DEFAULT_DELETE_TIMEOUT)
-  } catch (error) {
-    await refreshReports()
-    loading.value = false
-    toggleDeleteModal()
-    showErrorMessage(error)
+async function handleDeleteReport() {
+  if (!deleteModel.value) {
+    showErrorMessage(t('notifications.report.error.delete', 1))
+    return
   }
+
+  loading.value = true
+  await deleteReports({ folders: [deleteModel.value?.id], type: 'reports' })
+  await refreshReports()
+  loading.value = false
+  toggleDeleteModal()
 }
 
-async function deleteReports() {
-  try {
-    loading.value = true
-
-    await $fetch(`/api/${route.params.project}/action/delete`, {
-      method: 'post',
-      body: {
-        folders: Object.entries(selectedRows.value)
-          .filter(([_, value]) => value)
-          .map(([key]) => key),
-        type: 'reports'
-      }
-    })
-
-    setTimeout(async () => {
-      await refreshReports()
-      loading.value = false
-      showSuccessMessage(t('notifications.report.delete', 2))
-      toggleDeleteSelected(true)
-    }, DEFAULT_DELETE_TIMEOUT)
-  } catch (error) {
-    await refreshReports()
-    loading.value = false
-    toggleDeleteSelected(true)
-    showErrorMessage(error)
+async function handleDeleteReports() {
+  if (!Object.keys(selectedRows.value).length) {
+    showErrorMessage(t('notifications.report.error.delete', 2))
+    return
   }
+
+  loading.value = true
+  await deleteReports({
+    folders: Object.entries(selectedRows.value)
+      .filter(([_, value]) => value)
+      .map(([key]) => key),
+    type: 'reports'
+  })
+  await refreshReports()
+  loading.value = false
+  toggleDeleteSelected(true)
 }
 
-async function backupReport() {
-  try {
-    loading.value = true
-
-    await $fetch(`/api/${route.params.project}/action/backup`, {
-      method: 'post',
-      body: {
-        folders: [backupModel.value?.id]
-      }
-    })
-
-    setTimeout(() => {
-      loading.value = false
-      showSuccessMessage(t('notifications.report.backup', 1), backupModel.value?.id)
-      toggleBackupModal()
-    }, DEFAULT_DELETE_TIMEOUT)
-  } catch (error) {
-    loading.value = false
-    toggleBackupModal()
-    showErrorMessage(error)
+async function handleBackupReport() {
+  if (!backupModel.value) {
+    showErrorMessage(t('notifications.report.error.backup', 1))
+    return
   }
+
+  loading.value = true
+  await backupReports({ folders: [backupModel.value?.id] })
+  loading.value = false
+  toggleBackupModal()
 }
 
-async function backupReports() {
-  try {
-    loading.value = true
-
-    await $fetch(`/api/${route.params.project}/action/backup`, {
-      method: 'post',
-      body: {
-        folders: Object.entries(selectedRows.value)
-          .filter(([_, value]) => value)
-          .map(([key]) => key)
-      }
-    })
-
-    setTimeout(() => {
-      loading.value = false
-      showSuccessMessage(t('notifications.report.backup', 2))
-      toggleBackupSelected(true)
-    }, DEFAULT_DELETE_TIMEOUT)
-  } catch (error) {
-    loading.value = false
-    toggleBackupSelected(true)
-    showErrorMessage(error)
+async function handleBackupReports() {
+  if (!Object.keys(selectedRows.value).length) {
+    showErrorMessage(t('notifications.report.error.backup', 2))
+    return
   }
+
+  loading.value = true
+  await backupReports({
+    folders: Object.entries(selectedRows.value)
+      .filter(([_, value]) => value)
+      .map(([key]) => key)
+  })
+  loading.value = false
+  toggleBackupSelected(true)
 }
 
 function getReportDate(createDate: string) {
@@ -247,6 +204,7 @@ const columns: TableColumn<Report>[] = [
     id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
+        'id': 'toggle-all-rows',
         'modelValue': table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected(),
         'onUpdate:modelValue': (value: boolean | 'indeterminate') => {
           table.toggleAllPageRowsSelected(!!value)
@@ -266,6 +224,7 @@ const columns: TableColumn<Report>[] = [
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
+        'id': row.original.id,
         'modelValue': row.getIsSelected(),
         'onUpdate:modelValue': (value: boolean | 'indeterminate') => {
           row.toggleSelected(!!value)
@@ -418,7 +377,7 @@ const columns: TableColumn<Report>[] = [
         </UPageCard>
       </template>
       <template #footer>
-        <UButton color="error" :label="t('actions.delete')" :loading="loading" @click="deleteReport" />
+        <UButton color="error" :label="t('actions.delete')" :loading="loading" @click="handleDeleteReport" />
         <UButton color="neutral" variant="outline" :label="t('actions.cancel')" @click="() => toggleDeleteModal()" />
       </template>
     </UModal>
@@ -439,7 +398,7 @@ const columns: TableColumn<Report>[] = [
         </UScrollArea>
       </template>
       <template #footer>
-        <UButton color="error" :label="t('actions.delete')" :loading="loading" @click="deleteReports" />
+        <UButton color="error" :label="t('actions.delete')" :loading="loading" @click="handleDeleteReports" />
         <UButton color="neutral" variant="outline" :label="t('actions.cancel')" @click="() => toggleDeleteSelected()" />
       </template>
     </UModal>
@@ -467,7 +426,7 @@ const columns: TableColumn<Report>[] = [
         </UPageCard>
       </template>
       <template #footer>
-        <UButton color="primary" :label="t('actions.backup')" :loading="loading" @click="backupReport" />
+        <UButton color="primary" :label="t('actions.backup')" :loading="loading" @click="handleBackupReport" />
         <UButton color="neutral" variant="outline" :label="t('actions.cancel')" @click="() => toggleBackupModal()" />
       </template>
     </UModal>
@@ -488,7 +447,7 @@ const columns: TableColumn<Report>[] = [
         </UScrollArea>
       </template>
       <template #footer>
-        <UButton color="primary" :label="t('actions.backup')" :loading="loading" @click="backupReports" />
+        <UButton color="primary" :label="t('actions.backup')" :loading="loading" @click="handleBackupReports" />
         <UButton color="neutral" variant="outline" :label="t('actions.cancel')" @click="() => toggleBackupSelected()" />
       </template>
     </UModal>

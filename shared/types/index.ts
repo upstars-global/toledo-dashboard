@@ -11,6 +11,8 @@ export type Locale = 'en'
 
 type ReportStatus = 'passed' | 'failed' | 'pending' | 'crashed' | 'error' | 'unknown'
 
+export type BackstopCommand = 'reference' | 'test'
+
 export type Observer<T> = {
   [key: number | string]: T
 }
@@ -23,6 +25,7 @@ export type FormatedBytes = {
 export interface ReferenceRequestBody {
   scenarios?: string[]
   userName?: string
+  userId?: string
 }
 
 export interface Application {
@@ -35,6 +38,20 @@ export interface Application {
     tag?: string
     pipeline?: string
   }
+}
+
+export type SelectedApp = {
+  label: string
+  description: string
+  app: Application
+}
+
+export interface StartTestRequestBody {
+  application?: Application
+  misMatchThreshold?: number
+  scenarios?: string[]
+  userName?: string
+  userId?: string
 }
 
 export interface DiskSpace<T> {
@@ -87,4 +104,41 @@ export interface Scenario {
 export interface Settings {
   misMatchThreshold: number
   repoUrl: string
+}
+
+export interface JobStatus {
+  id: string
+  name: BackstopCommand
+  state: 'completed' | 'failed' | 'active' | 'delayed' | 'prioritized' | 'waiting' | 'waiting-children'
+  progress: string | boolean | number | object
+  attemptsMade?: number
+  failedReason?: string
+  timestamp: number
+  processedOn?: number
+  finishedOn?: number
+}
+
+export interface JobStatusMessage {
+  type: 'job-status'
+  status: string
+  command?: BackstopCommand
+  jobId?: string
+  appName?: string
+  userId?: string
+  error?: string
+  timestamp: number
+}
+
+export type ApplicationEvents = {
+  'job:reference': JobStatusMessage
+  'job:test': JobStatusMessage
+}
+
+export interface DeleteRequestBody {
+  folders: string[]
+  type: 'reports' | 'backups'
+}
+
+export interface BackupRequestBody {
+  folders: string[]
 }

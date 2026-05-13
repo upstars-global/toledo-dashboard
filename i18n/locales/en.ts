@@ -10,6 +10,7 @@ export default {
     deleteSelected: 'Delete reports',
     open: 'Open',
     refreshApps: 'Refresh Apps',
+    refreshJobs: 'Refresh Jobs',
     showReport: 'Show report',
     startSelectedTest: 'Start selected test | Start selected tests',
     startTest: 'Start test'
@@ -18,6 +19,9 @@ export default {
     home: 'Home'
   },
   controlPanel: {
+    actions: {
+      title: 'Actions'
+    },
     diskUsage: {
       backups: 'Backups: {text}',
       references: 'References: {text}',
@@ -25,6 +29,18 @@ export default {
       scenarios: 'Scenarios: {text}',
       title: 'File storage',
       used: '{used} used out of {capacity}'
+    },
+    jobs: {
+      status: {
+        'active': 'Active',
+        'completed': 'Completed',
+        'delayed': 'Delayed',
+        'failed': 'Failed',
+        'prioritized': 'Prioritized',
+        'waiting': 'Waiting',
+        'waiting-children': 'Waiting children'
+      },
+      title: 'Jobs status'
     }
   },
   envs: {
@@ -66,8 +82,9 @@ export default {
       title: 'Backup report | Backup reports'
     },
     createReference: {
+      common: 'Are you sure you want to create new references for all scenarios?',
       description:
-        'Are you sure you want to create reference for selected scenario? | Are you sure you want to create references for selected scenarios?',
+        'Are you sure you want to create new reference for selected scenario? | Are you sure you want to create new references for selected scenarios?',
       title: 'Create reference | Create references'
     },
     delete: {
@@ -76,6 +93,16 @@ export default {
       title: 'Delete report | Delete reports'
     },
     startSelectedTest: {
+      apps: {
+        dynamic: {
+          label: 'Dynamic apps',
+          matching: 'Persistent apps matching "${query}"...'
+        },
+        persistent: {
+          label: 'Persistent apps',
+          matching: 'Dynamic apps matching "${query}"...'
+        }
+      },
       description: 'Config parameters for test',
       headline: 'Choose application',
       misMatchThreshold: 'Mismatch threshold',
@@ -106,15 +133,24 @@ export default {
   },
   notifications: {
     references: {
+      added: 'Creation of references has been added to queue',
+      failed: 'Reference creation failed',
+      finish: 'Creation of references has finished',
       start: 'Creation of references has started'
     },
     report: {
       backup: 'Report has been backed up | Reports have been backed up',
-      delete: 'Report has been deleted | Reports have been deleted'
+      delete: 'Report has been deleted | Reports have been deleted',
+      error: {
+        backup: 'Report backup failed | Reports backup failed',
+        delete: 'Report deletion failed | Reports deletion failed'
+      }
     },
     tests: {
-      start: 'Testing started',
-      startSelected: 'Testing of selected tests has started'
+      added: 'Test has been added to queue',
+      failed: 'Test failed',
+      finish: 'Testing has finished',
+      start: 'Testing started'
     }
   },
   reports: {

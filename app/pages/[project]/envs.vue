@@ -2,6 +2,7 @@
 import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import type { Application } from '~~/shared/types'
+import { useActions } from '~/composables/useActions'
 
 definePageMeta({
   middleware: 'auth',
@@ -17,10 +18,10 @@ const route = useRoute()
 const { applications } = storeToRefs(useApplicationsStore())
 const { globalMismatchThreshold } = storeToRefs(useSettingsStore())
 const { reports } = storeToRefs(useReportsStore())
-const { refreshReports } = useReportsStore()
 const { refreshApps } = useApplicationsStore()
-const { showErrorMessage, showSuccessMessage } = useNotifications()
-const { user } = useCurrentUser()
+const { startTest } = useActions()
+const { userId, userName } = useCurrentUser()
+const { isReferenceJobRunning } = storeToRefs(useJobsStore())
 
 const modal = reactive({
   startTest: false
@@ -32,22 +33,13 @@ const columnFilters = ref([{ id: 'name', value: '' }])
 const sorting = ref([{ id: 'name', desc: false }])
 
 async function handleStartTest() {
-  try {
-    await $fetch(`/api/${route.params.project}/action/start`, {
-      method: 'post',
-      body: {
-        application: selectedApp.value,
-        misMatchThreshold: misMatchThreshold.value,
-        userName: user.value?.name
-      }
-    })
-    showSuccessMessage(t('notifications.tests.start'), selectedApp.value?.name)
-    toggleStartTestModal()
-    await refreshReports()
-  } catch (error) {
-    showErrorMessage(error)
-    await refreshReports()
-  }
+  await startTest({
+    application: selectedApp.value,
+    misMatchThreshold: misMatchThreshold.value,
+    userName: userName.value,
+    userId: userId.value
+  })
+  toggleStartTestModal()
 }
 
 function toggleStartTestModal(row?: Application) {
@@ -110,6 +102,7 @@ const columns: TableColumn<Application>[] = [
           : undefined,
         h(UButton, {
           label: t('actions.startTest'),
+          disabled: isReferenceJobRunning.value,
           onClick: () => toggleStartTestModal(row.original)
         })
       ])

@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import { h, resolveComponent } from 'vue'
-import type { Application, ReferenceRequestBody, Scenario } from '~~/shared/types'
+import type { Scenario, SelectedApp } from '~~/shared/types'
 import type { TableColumn, CommandPaletteGroup } from '@nuxt/ui'
 
-type SelectedApp = {
-  label: string
-  description: string
-  app: Application
-}
 type SelectedRows = Record<string, boolean | undefined>
 
 definePageMeta({
@@ -22,13 +17,14 @@ const UCheckbox = resolveComponent('UCheckbox')
 const { t } = useI18n()
 const { ui } = useAppConfig()
 const route = useRoute()
-const { showErrorMessage, showSuccessMessage } = useNotifications()
-const { refreshReports } = useReportsStore()
+const { createReferences, startTest } = useActions()
+const { showErrorMessage } = useNotifications()
 const { dynamicAppsList, persistentAppsList } = storeToRefs(useApplicationsStore())
 const { refreshApps } = useApplicationsStore()
 const { mockUrl } = storeToRefs(useConfigStore())
 const { globalMismatchThreshold } = storeToRefs(useSettingsStore())
-const { user } = useCurrentUser()
+const { userId, userName } = useCurrentUser()
+const { isReferenceJobRunning } = storeToRefs(useJobsStore())
 
 const { data: scenariosData, error: scenariosError } = await useFetch<Scenario[]>(
   `/api/${route.params.project}/scenarios`,
@@ -38,6 +34,7 @@ const { data: scenariosData, error: scenariosError } = await useFetch<Scenario[]
 if (scenariosError.value) {
   showErrorMessage(scenariosError.value)
 }
+
 const modal = reactive({
   startTest: false,
   createReference: false
@@ -86,7 +83,9 @@ function getApplicationsInfo(): CommandPaletteGroup[] {
   return [
     {
       id: 'persistentAppsList',
-      label: searchQuery.value ? `Persistent apps matching “${searchQuery.value}”...` : 'Persistent apps',
+      label: searchQuery.value
+        ? t('modal.startSelectedTest.apps.persistent.matching', { query: searchQuery.value })
+        : t('modal.startSelectedTest.apps.persistent.label'),
       items: persistentAppsList.value.map((app) => ({
         label: app.name,
         description: `${app.version?.tag} / ${app.version?.pipeline}`,
@@ -95,50 +94,36 @@ function getApplicationsInfo(): CommandPaletteGroup[] {
     },
     {
       id: 'dynamicAppsList',
-      label: searchQuery.value ? `Dynamic apps matching “${searchQuery.value}”...` : 'Dynamic apps',
+      label: searchQuery.value
+        ? t('modal.startSelectedTest.apps.dynamic.matching', { query: searchQuery.value })
+        : t('modal.startSelectedTest.apps.dynamic.label'),
       items: dynamicAppsList.value.map((app) => ({ label: app.name, app }))
     }
   ]
 }
 
-async function handleStartTest() {
-  try {
-    await $fetch(`/api/${route.params.project}/action/start`, {
-      method: 'post',
-      body: {
-        application: selectedApp.value?.app,
-        misMatchThreshold: misMatchThreshold.value,
-        scenarios: Object.entries(selectedRows.value)
-          .filter(([_, value]) => value)
-          .map(([key]) => key),
-        userName: user.value?.name
-      }
-    })
-    showSuccessMessage(t('notifications.tests.start'))
-    toggleStartTestModal(true)
-    await refreshReports()
-  } catch (error) {
-    showErrorMessage(error)
-    await refreshReports()
-  }
+async function handleCreateReferences() {
+  await createReferences({
+    scenarios: Object.entries(selectedRows.value)
+      .filter(([_, value]) => value)
+      .map(([key]) => key),
+    userName: userName.value,
+    userId: userId.value
+  })
+  toggleCreateReferenceModal(true)
 }
 
-async function handleCreateReferences() {
-  try {
-    const body: ReferenceRequestBody = {
-      scenarios: Object.entries(selectedRows.value)
-        .filter(([_, value]) => value)
-        .map(([key]) => key),
-      userName: user.value?.name
-    }
-
-    await $fetch(`/api/${route.params.project}/action/reference`, { method: 'post', body })
-
-    showSuccessMessage(t('notifications.references.start'))
-    toggleCreateReferenceModal(true)
-  } catch (error) {
-    showErrorMessage(error)
-  }
+async function handleStartTest() {
+  await startTest({
+    application: selectedApp.value?.app,
+    misMatchThreshold: misMatchThreshold.value,
+    scenarios: Object.entries(selectedRows.value)
+      .filter(([_, value]) => value)
+      .map(([key]) => key),
+    userName: userName.value,
+    userId: userId.value
+  })
+  toggleStartTestModal(true)
 }
 
 function handleFilterChange(query: string) {
@@ -228,6 +213,7 @@ const columns: TableColumn<Scenario>[] = [
           label: t('actions.startTest'),
           variant: 'outline',
           color: 'secondary',
+          disabled: isReferenceJobRunning.value,
           onClick: () => {
             table.toggleAllRowsSelected(false)
             if (isRowsSelected.value) {
@@ -253,7 +239,7 @@ const columns: TableColumn<Scenario>[] = [
 
 <template>
   <UiDashboardContent class="pb-24 h-full gap-2 lg:gap-4">
-    <UPageGrid id="control-panel-tests" class="h-full">
+    <UPageGrid id="scenarios" class="h-full">
       <UPageCard
         class="col-span-3 h-full overflow-auto"
         :ui="{ header: 'w-full mb-0', container: 'lg:flex', wrapper: 'flex-0' }"
@@ -279,10 +265,10 @@ const columns: TableColumn<Scenario>[] = [
             </div>
 
             <div v-if="isRowsSelected" class="flex gap-2">
-              <UButton @click="() => toggleStartTestModal()">
+              <UButton :disabled="isReferenceJobRunning" @click="() => toggleStartTestModal()">
                 {{ t('actions.startSelectedTest', Object.keys(selectedRows).length) }}
               </UButton>
-              <UButton @click="() => toggleCreateReferenceModal()">
+              <UButton :disabled="isReferenceJobRunning" @click="() => toggleCreateReferenceModal()">
                 {{ t('actions.createSelectedReference', Object.keys(selectedRows).length) }}
               </UButton>
             </div>
