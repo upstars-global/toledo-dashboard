@@ -140,7 +140,11 @@ export default {
     },
     report: {
       backup: 'Report has been backed up | Reports have been backed up',
-      delete: 'Report has been deleted | Reports have been deleted'
+      delete: 'Report has been deleted | Reports have been deleted',
+      error: {
+        backup: 'Report backup failed | Reports backup failed',
+        delete: 'Report deletion failed | Reports deletion failed'
+      }
     },
     tests: {
       added: 'Test has been added to queue',

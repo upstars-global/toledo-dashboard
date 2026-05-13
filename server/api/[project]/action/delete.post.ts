@@ -1,3 +1,4 @@
+import type { DeleteRequestBody } from '~~/shared/types'
 import { throwError } from '~~/server/helpers/throwError'
 
 export default defineEventHandler(async (event) => {
@@ -9,7 +10,7 @@ export default defineEventHandler(async (event) => {
       return
     }
 
-    const body = await readBody(event)
+    const body = await readBody<DeleteRequestBody>(event)
 
     return await $fetch(`/_${projectId}/api/action/delete`, {
       method: 'post',

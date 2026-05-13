@@ -133,3 +133,12 @@ export type ApplicationEvents = {
   'job:reference': JobStatusMessage
   'job:test': JobStatusMessage
 }
+
+export interface DeleteRequestBody {
+  folders: string[]
+  type: 'reports' | 'backups'
+}
+
+export interface BackupRequestBody {
+  folders: string[]
+}
