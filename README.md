@@ -1,75 +1,67 @@
-# Nuxt Minimal Starter
+# toledo-dashboard
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Dashboard for Toledo service. Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-## Setup
+## Project configuration
 
-Make sure to install dependencies:
+### Prerequisites
+
+The following tools are required for local development:
+
+- install [Node.js](https://nodejs.org/en/download/):
+  - follow the link above and select the installation option that suits you best.
+  - required version: v22.12.0 or above
+- install [pnpm](https://pnpm.io/installation)
+
+### Installation
 
 ```bash
-# npm
-npm install
+# clone project
+git clone git@github.com:upstars-global/toledo-dashboard.git
 
-# pnpm
+# install dependencies
 pnpm install
 
-# yarn
-yarn install
-
-# bun
-bun install
+# prepare env variables for front
+cp .env.example .env
 ```
 
-## Development Server
+### Environment variables
 
-Start the development server on `http://localhost:3000`:
+Common:
+
+- `NODE_ENV` — usually `development`
+- `NUXT_HOST` — app host (default: `localhost`)
+- `NUXT_PORT` / `PORT` — app port (default: `5000`)
+- `DEVTOOLS` - enable devtools (default: `false`)
+- `SSR_ENABLE` - enable server-side rendering (default: `true`)
+- `SOCKET_HOST` - socket host (default: `localhost:5010`)
+
+Config:
+
+- `NUXT_SESSION_PASSWORD` - session password
+- `NUXT_OAUTH_GOOGLE_CLIENT_ID` - google oauth client id
+- `NUXT_OAUTH_GOOGLE_CLIENT_SECRET` - google oauth client secret
+- `NUXT_OAUTH_GITHUB_CLIENT_ID` - github oauth client id
+- `NUXT_OAUTH_GITHUB_CLIENT_SECRET` - github oauth client secret
+- `ALLOW_EMAIL_HOSTS` - list of allowed email hosts
+- `ALLOW_GITHUB_COMPANIES` - list of allowed github companies
+
+### Run app in development mode
 
 ```bash
-# npm
-npm run dev
+pnpm run dev
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+# open http://localhost:5000
 ```
 
-## Production
-
-Build the application for production:
+### Run app in production mode
 
 ```bash
-# npm
-npm run build
+# first build server
+pnpm run build
+# run server
+pnpm run preview
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+# open http://localhost:3000
 ```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
