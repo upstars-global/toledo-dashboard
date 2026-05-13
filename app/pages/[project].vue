@@ -41,6 +41,9 @@ async function jobReferenceStatus(message: JobStatusMessage) {
 }
 
 async function jobTestStatus(message: JobStatusMessage) {
+  await refreshJobsStatus()
+  await refreshReports()
+
   switch (message.status) {
     case 'queued':
       showSuccessMessage(t('notifications.tests.added'), message.appName)
