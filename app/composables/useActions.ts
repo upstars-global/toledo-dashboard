@@ -28,10 +28,8 @@ export const useActions = () => {
     try {
       await $fetch(`/api/${currentRoute.value.params.project}/action/reference`, { method: 'post', body })
 
-      setTimeout(async () => {
-        await refreshJobsStatus()
-        await refreshReports()
-      }, DEFAULT_TIMEOUT)
+      await refreshJobsStatus()
+      await refreshReports()
     } catch (error) {
       showErrorMessage(error)
 
@@ -60,10 +58,8 @@ export const useActions = () => {
     try {
       await $fetch(`/api/${currentRoute.value.params.project}/action/start`, { method: 'post', body })
 
-      setTimeout(async () => {
-        await refreshJobsStatus()
-        await refreshReports()
-      }, DEFAULT_TIMEOUT)
+      await refreshJobsStatus()
+      await refreshReports()
     } catch (error) {
       showErrorMessage(error)
 
