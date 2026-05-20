@@ -7,28 +7,28 @@ const ENDPOINTS = ['api/**']
 const PROJECTS_LIST: ProjectConfig[] = [
   {
     id: 'bond',
-    apiUrl: 'https://toledo-staging-bond-frontera.wlabel.site',
+    apiUrl: 'https://toledo-bond-staging.wlabel.site',
     label: 'Bond',
     icon: 'i-lucide-coins',
     mockUrl: 'https://mock-bond.staging.wlabel.site'
   },
   {
     id: 'felix',
-    apiUrl: 'https://toledo-staging-felix-frontera.wlabel.site',
+    apiUrl: 'https://toledo-felix-staging.wlabel.site',
     label: 'Felix',
     icon: '',
     mockUrl: 'https://mock-felix.staging.wlabel.site'
   },
   {
     id: 'thor',
-    apiUrl: 'https://toledo-staging-thor-frontera.wlabel.site',
+    apiUrl: 'https://toledo-thor-staging.wlabel.site',
     label: 'Thor',
     icon: 'i-lucide-gavel',
     mockUrl: 'https://mock-thor.staging.wlabel.site'
   },
   {
     id: 'vegas',
-    apiUrl: 'https://toledo-staging-vegas-frontera.wlabel.site',
+    apiUrl: 'https://toledo-vegas-staging.wlabel.site',
     label: 'Vegas',
     icon: 'i-lucide-dices',
     mockUrl: 'https://mock-vegas.staging.wlabel.site'
