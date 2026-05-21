@@ -1,14 +1,14 @@
 import type { Application } from '~~/shared/types'
 
 export const useApplicationsStore = defineStore('applications', () => {
-  const route = useRoute()
+  const { currentRoute } = useRouter()
   const { showErrorMessage } = useNotifications()
 
   const {
     data: applications,
     error,
     refresh: refreshApps
-  } = useFetch<Application[]>(() => `/api/${route.params.project}/applications`, {
+  } = useFetch<Application[]>(() => `/api/${currentRoute.value.params.project}/applications`, {
     default: () => []
   })
 

@@ -1,14 +1,14 @@
 import type { JobStatus } from '~~/shared/types'
 
 export const useJobsStore = defineStore('jobs', () => {
-  const route = useRoute()
+  const { currentRoute } = useRouter()
   const { showErrorMessage } = useNotifications()
 
   const {
     data: jobsStatus,
     error: jobsStatusError,
     refresh: refreshJobsStatus
-  } = useFetch<JobStatus[]>(() => `/api/${route.params.project}/jobs-status`, {
+  } = useFetch<JobStatus[]>(() => `/api/${currentRoute.value.params.project}/jobs-status`, {
     default: () => []
   })
 
