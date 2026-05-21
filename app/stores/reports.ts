@@ -1,14 +1,14 @@
 import type { Report } from '~~/shared/types'
 
 export const useReportsStore = defineStore('reports', () => {
-  const { currentRoute } = useRouter()
+  const route = useRoute()
   const { showErrorMessage } = useNotifications()
 
   const {
     data: reports,
     error,
     refresh: refreshReports
-  } = useFetch<Report[]>(`/api/${currentRoute.value.params.project}/reports`, {
+  } = useFetch<Report[]>(() => `/api/${route.params.project}/reports`, {
     default: () => []
   })
 

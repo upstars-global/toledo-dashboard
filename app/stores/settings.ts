@@ -1,11 +1,11 @@
 import type { Settings } from '~~/shared/types'
 
 export const useSettingsStore = defineStore('settings', () => {
-  const { currentRoute } = useRouter()
+  const route = useRoute()
   const { showErrorMessage } = useNotifications()
 
   const { data: settingsData, error: settingsError } = useFetch<Settings | null>(
-    `/api/${currentRoute.value.params.project}/settings`
+    () => `/api/${route.params.project}/settings`
   )
 
   const globalMismatchThreshold = computed(() => {
