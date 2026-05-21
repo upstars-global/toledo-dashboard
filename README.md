@@ -35,7 +35,6 @@ Common:
 - `NUXT_PORT` / `PORT` — app port (default: `5000`)
 - `DEVTOOLS` - enable devtools (default: `false`)
 - `SSR_ENABLE` - enable server-side rendering (default: `true`)
-- `SOCKET_HOST` - socket host (default: `localhost:5010`)
 
 Config:
 

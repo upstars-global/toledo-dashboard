@@ -27,7 +27,6 @@ export default defineNuxtConfig({
     },
     public: {
       isDev: process.env.NODE_ENV === 'development',
-      socketHost: process.env.SOCKET_HOST
     }
   },
   compatibilityDate: '2025-07-15',
