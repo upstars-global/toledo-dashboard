@@ -10,28 +10,32 @@ const PROJECTS_LIST: ProjectConfig[] = [
     apiUrl: 'https://toledo-bond-staging.wlabel.site',
     label: 'Bond',
     icon: 'i-lucide-coins',
-    mockUrl: 'https://mock-bond.staging.wlabel.site'
+    mockUrl: 'https://mock-bond.staging.wlabel.site',
+    socketUrl: 'toledo-bond-staging.wlabel.site/ws/jobs'
   },
   {
     id: 'felix',
     apiUrl: 'https://toledo-felix-staging.wlabel.site',
     label: 'Felix',
     icon: '',
-    mockUrl: 'https://mock-felix.staging.wlabel.site'
+    mockUrl: 'https://mock-felix.staging.wlabel.site',
+    socketUrl: 'toledo-felix-staging.wlabel.site/ws/jobs'
   },
   {
     id: 'thor',
     apiUrl: 'https://toledo-thor-staging.wlabel.site',
     label: 'Thor',
     icon: 'i-lucide-gavel',
-    mockUrl: 'https://mock-thor.staging.wlabel.site'
+    mockUrl: 'https://mock-thor.staging.wlabel.site',
+    socketUrl: 'toledo-thor-staging.wlabel.site/ws/jobs'
   },
   {
     id: 'vegas',
     apiUrl: 'https://toledo-vegas-staging.wlabel.site',
     label: 'Vegas',
     icon: 'i-lucide-dices',
-    mockUrl: 'https://mock-vegas.staging.wlabel.site'
+    mockUrl: 'https://mock-vegas.staging.wlabel.site',
+    socketUrl: 'toledo-vegas-staging.wlabel.site/ws/jobs'
   }
 ]
 

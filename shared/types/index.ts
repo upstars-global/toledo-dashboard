@@ -77,6 +77,7 @@ export interface ProjectConfig {
   label: string
   icon?: string
   mockUrl?: string
+  socketUrl?: string
 }
 
 export interface Report<T = FormatedBytes> {
@@ -129,9 +130,13 @@ export interface JobStatusMessage {
   timestamp: number
 }
 
+export type JobStatusEvents = {
+  label: string
+  message: JobStatusMessage
+}
+
 export type ApplicationEvents = {
-  'job:reference': JobStatusMessage
-  'job:test': JobStatusMessage
+  [key: string]: JobStatusEvents
 }
 
 export interface DeleteRequestBody {

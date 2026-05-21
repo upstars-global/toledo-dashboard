@@ -2,34 +2,36 @@ import type { Emitter } from 'mitt'
 import type { ApplicationEvents, JobStatusMessage } from '~~/shared/types'
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const socketHost = nuxtApp.$config.public.socketHost
-
-  const { userId } = useCurrentUser()
   const $bus = nuxtApp.$bus as Emitter<ApplicationEvents>
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const socket = new WebSocket(`${protocol}//${socketHost}/ws/jobs`)
+  const { userId } = useCurrentUser()
+  const configStore = useConfigStore()
 
-  socket.addEventListener('open', () => {
-    socket.send(JSON.stringify({ type: 'subscribe', userId: userId.value }))
+  configStore.projectsList.forEach((project) => {
+    const socket = new WebSocket(`${protocol}//${project.socketUrl}`)
 
-    console.log('WebSocket connected')
-  })
+    socket.addEventListener('open', () => {
+      socket.send(JSON.stringify({ type: 'subscribe', userId: userId.value }))
 
-  socket.addEventListener('message', async (event) => {
-    const message: JobStatusMessage = JSON.parse(event.data)
+      console.log(`${project.label} WebSocket connected`)
+    })
 
-    if (message.type === 'job-status') {
-      if (message.command === 'reference') {
-        $bus.emit('job:reference', message)
+    socket.addEventListener('message', async (event) => {
+      const message: JobStatusMessage = JSON.parse(event.data)
+
+      if (message.type === 'job-status') {
+        if (message.command === 'reference') {
+          $bus.emit(`${project.id}:job:reference`, { label: project.label, message })
+        }
+
+        if (message.command === 'test') {
+          $bus.emit(`${project.id}:job:test`, { label: project.label, message })
+        }
       }
+    })
 
-      if (message.command === 'test') {
-        $bus.emit('job:test', message)
-      }
-    }
-  })
-
-  socket.addEventListener('close', () => {
-    console.log('WebSocket closed')
+    socket.addEventListener('close', () => {
+      console.log(`${project.label} WebSocket closed`)
+    })
   })
 })
