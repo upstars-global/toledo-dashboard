@@ -17,7 +17,7 @@ const PROJECTS_LIST: ProjectConfig[] = [
     id: 'felix',
     apiUrl: 'https://toledo-felix-staging.wlabel.site',
     label: 'Felix',
-    icon: '',
+    icon: 'i-lucide-cat',
     mockUrl: 'https://mock-felix.staging.wlabel.site',
     socketUrl: 'toledo-felix-staging.wlabel.site/ws/jobs'
   },
