@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   try {
     const projectId = getRouterParam(event, 'project')
 
-    if (!projectId) {
+    if (!projectId || projectId === 'undefined') {
       throwError('projectId is not defined', 'GET_PROJECT_ERROR')
       return null
     }

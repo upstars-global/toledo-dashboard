@@ -150,7 +150,7 @@ export const useNavigationStore = defineStore('navigation', () => {
       {
         label: t('menu.github'),
         icon: ui.icons.github,
-        to: 'https://github.com/upstars-global',
+        to: 'https://github.com/upstars-global/toledo-dashboard',
         target: '_blank'
       },
       {
