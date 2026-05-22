@@ -55,7 +55,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .output --project-name=toledo-dashboard --branch=main
+          command: pages deploy .output/public --project-name=toledo-dashboard --branch=main
 
       - name: Deploy preview to Cloudflare Pages
         if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
@@ -63,4 +63,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .output --project-name=toledo-dashboard --branch=${{ github.head_ref || github.ref_name }}
+          command: pages deploy .output/public --project-name=toledo-dashboard --branch=${{ github.head_ref || github.ref_name }}
