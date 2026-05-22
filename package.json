@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "cf:build": "nuxt build --preset=cloudflare_pages",
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",
     "dev": "nuxt dev",
