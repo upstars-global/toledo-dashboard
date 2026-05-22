@@ -5,7 +5,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const { showErrorMessage } = useNotifications()
 
   const { data: settingsData, error: settingsError } = useFetch<Settings | null>(
-    `/api/${currentRoute.value.params.project}/settings`
+    () => `/api/${currentRoute.value.params.project}/settings`
   )
 
   const globalMismatchThreshold = computed(() => {

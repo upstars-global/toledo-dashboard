@@ -8,7 +8,7 @@ export const useApplicationsStore = defineStore('applications', () => {
     data: applications,
     error,
     refresh: refreshApps
-  } = useFetch<Application[]>(`/api/${currentRoute.value.params.project}/applications`, {
+  } = useFetch<Application[]>(() => `/api/${currentRoute.value.params.project}/applications`, {
     default: () => []
   })
 

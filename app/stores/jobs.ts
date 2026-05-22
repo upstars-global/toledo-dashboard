@@ -8,7 +8,7 @@ export const useJobsStore = defineStore('jobs', () => {
     data: jobsStatus,
     error: jobsStatusError,
     refresh: refreshJobsStatus
-  } = useFetch<JobStatus[]>(`/api/${currentRoute.value.params.project}/jobs-status`, {
+  } = useFetch<JobStatus[]>(() => `/api/${currentRoute.value.params.project}/jobs-status`, {
     default: () => []
   })
 

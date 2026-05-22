@@ -26,8 +26,7 @@ export default defineNuxtConfig({
       password: process.env.NUXT_SESSION_PASSWORD || ''
     },
     public: {
-      isDev: process.env.NODE_ENV === 'development',
-      socketHost: process.env.SOCKET_HOST
+      isDev: process.env.NODE_ENV === 'development'
     }
   },
   compatibilityDate: '2025-07-15',

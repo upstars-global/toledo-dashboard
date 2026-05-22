@@ -8,7 +8,7 @@ export const useReportsStore = defineStore('reports', () => {
     data: reports,
     error,
     refresh: refreshReports
-  } = useFetch<Report[]>(`/api/${currentRoute.value.params.project}/reports`, {
+  } = useFetch<Report[]>(() => `/api/${currentRoute.value.params.project}/reports`, {
     default: () => []
   })
 
