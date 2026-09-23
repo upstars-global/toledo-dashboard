@@ -158,6 +158,42 @@ export default {
       start: 'Testing started'
     }
   },
+  report: {
+    createdBy: 'Created by: {createdBy}',
+    details: {
+      diffPercent: 'diff%:',
+      diffX: 'diff-x:',
+      diffY: 'diff-y:',
+      filename: 'filename:',
+      label: 'label:',
+      selector: 'selector:',
+      viewportLabel: 'viewport:'
+    },
+    environment: 'Environment: {environment}',
+    filter: {
+      noResult: 'No tests match the current filter.',
+      placeholder: 'Filter tests with search...'
+    },
+    headline: 'Report',
+    loading: 'Loading report...',
+    pipeline: 'Pipeline ID: {pipeline}',
+    scrubberMode: {
+      diff: 'Diff',
+      reference: 'Reference',
+      scrubber: 'Scrubber',
+      test: 'Test'
+    },
+    settings: {
+      options: {
+        diff: 'Diff image',
+        hide: 'Hide all images',
+        ref: 'Reference image',
+        test: 'Test image',
+        text: 'Text info'
+      }
+    },
+    showDiff: 'Show diffs'
+  },
   reports: {
     columns: {
       branchName: 'Branch name',

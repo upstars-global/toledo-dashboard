@@ -11,7 +11,13 @@ export type Locale = 'en'
 
 type ReportStatus = 'passed' | 'failed' | 'pending' | 'crashed' | 'error' | 'unknown'
 
+export type BackstopTestStatus = 'pass' | 'fail' | 'broken'
+
+export type BackstopImageId = 'refImage' | 'testImage' | 'diffImage'
+
 export type BackstopCommand = 'reference' | 'test'
+
+export type ScrubberMode = 'SCRUB' | 'SHOW_SCRUBBER_REF_IMAGE' | 'SHOW_SCRUBBER_TEST_IMAGE' | 'SHOW_SCRUBBER_DIFF_IMAGE'
 
 export type Observer<T> = {
   [key: number | string]: T
@@ -147,4 +153,38 @@ export interface DeleteRequestBody {
 
 export interface BackupRequestBody {
   folders: string[]
+}
+
+export interface BackstopDiffInfo {
+  isSameDimensions: boolean
+  dimensionDifference: {
+    height: number
+    width: number
+  }
+  misMatchPercentage: string
+  analysisTime?: number
+}
+
+export interface BackstopTestPair {
+  diffImage?: string
+  reference?: string
+  test?: string
+  error?: string
+  engineErrorMsg?: string
+  label?: string
+  fileName?: string
+  diff?: BackstopDiffInfo
+  viewportLabel?: string
+  [k: string]: unknown
+}
+
+export interface BackstopTestReport {
+  pair?: BackstopTestPair
+  status?: BackstopTestStatus
+  [k: string]: unknown
+}
+
+export interface BackstopReport<T = FormatedBytes> extends Report<T> {
+  tests?: BackstopTestReport[]
+  [k: string]: unknown
 }

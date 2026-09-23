@@ -4,7 +4,7 @@ export const useConfigStore = defineStore('config', () => {
   const { currentRoute } = useRouter()
   const { showErrorMessage } = useNotifications()
 
-  const { data: projectsList, error: projectsError } = useFetch<ProjectConfig[]>(`/api/config/projects`, {
+  const { data: projectsList, error: projectsError } = useFetch<ProjectConfig[]>(() => `/api/config/projects`, {
     default: () => []
   })
 

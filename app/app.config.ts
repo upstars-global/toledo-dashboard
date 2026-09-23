@@ -30,6 +30,7 @@ const icons = {
   arrowUpDown: 'i-lucide-arrow-up-down',
   hardDrive: 'i-lucide-hard-drive',
   listTree: 'i-lucide-list-tree',
+  settings: 'i-lucide-settings',
   // default
   arrowDown: 'i-lucide-arrow-down',
   arrowLeft: 'i-lucide-arrow-left',
@@ -105,7 +106,7 @@ const presets: UiPresets = {
 export default defineAppConfig({
   theme: { darkColor: '', lightColor: '' },
   ui: {
-    colors: { primary: 'yellow', neutral: 'gray', secondary: 'amber' },
+    colors: { primary: 'indigo', neutral: 'gray', secondary: 'blue' },
     icons,
     presets
   }
