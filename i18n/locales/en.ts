@@ -174,7 +174,10 @@ export default {
       noResult: 'No tests match the current filter.',
       placeholder: 'Filter tests with search...'
     },
-    headline: 'Report',
+    headline: {
+      backups: 'Backup report',
+      reports: 'Report'
+    },
     loading: 'Loading report...',
     pipeline: 'Pipeline ID: {pipeline}',
     scrubberMode: {

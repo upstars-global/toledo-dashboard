@@ -175,6 +175,7 @@ export interface BackstopTestPair {
   fileName?: string
   diff?: BackstopDiffInfo
   viewportLabel?: string
+  selector?: string
   [k: string]: unknown
 }
 

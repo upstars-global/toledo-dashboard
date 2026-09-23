@@ -26,15 +26,16 @@ const filteredTests = computed(() => {
       return true
     }
 
-    return (
-      test.pair?.label?.toLowerCase().includes(needle)
-      || test.pair?.label
-        ?.split(/(?=[A-Z])/)
-        .join(' ')
-        .toLowerCase()
-        .includes(needle)
-        || test.pair?.viewportLabel?.toLowerCase().includes(needle)
-    )
+    const isLabelInclude = test.pair?.label?.toLowerCase().includes(needle)
+    const isLabelWithSpacesInclude = test.pair?.label
+      ?.split(/(?=[A-Z])/)
+      .join(' ')
+      .toLowerCase()
+      .includes(needle)
+    const isViewportInclude = test.pair?.viewportLabel?.toLowerCase().includes(needle)
+    const isSelectorInclude = test.pair?.selector?.toLowerCase().includes(needle)
+
+    return isLabelInclude || isLabelWithSpacesInclude || isViewportInclude || isSelectorInclude
   })
 })
 

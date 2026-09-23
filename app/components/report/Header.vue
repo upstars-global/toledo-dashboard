@@ -9,6 +9,7 @@ const props = defineProps<ReportHeaderProps>()
 
 const { t } = useI18n()
 const { ui } = useAppConfig()
+const route = useRoute()
 
 const date = computed(() => {
   return new Date(props.report.createDate ?? '').toLocaleString('en-US', {
@@ -39,7 +40,7 @@ const statusColor = computed(() => {
 <template>
   <UPageHeader
     :title="report.branchName"
-    :headline="t('report.headline')"
+    :headline="t(`report.headline.${route.meta.storageType}`)"
     :ui="{
       root: 'p-4 sm:p-6 bg-elevated border-accented',
       container: 'flex flex-wrap items-center justify-between gap-x-4 gap-y-2',

@@ -186,12 +186,14 @@ export const useNavigationStore = defineStore('navigation', () => {
     {
       label: t('navigation.reports'),
       icon: ui.icons.folderOpen,
-      to: localePath(`/${projectId}/reports`)
+      to: localePath(`/${projectId}/reports`),
+      active: currentRoute.value.path.includes(`/${projectId}/reports`)
     },
     {
       label: t('navigation.backups'),
       icon: ui.icons.folderArchive,
-      to: localePath(`/${projectId}/backups`)
+      to: localePath(`/${projectId}/backups`),
+      active: currentRoute.value.path.includes(`/${projectId}/backups`)
     }
   ]
 
